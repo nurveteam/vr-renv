@@ -5,10 +5,383 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box
+      }
+
+      body,
+      h1,
+      h2,
+      h3,
+      h4,
+      p,
+      figure,
+      blockquote,
+      dl,
+      dd {
+        margin: 0
+      }
+
+      ul[role="list"],
+      ol[role="list"] {
+        list-style: none
+      }
+
+      html:focus-within {
+        scroll-behavior: smooth
+      }
+
+      body {
+        min-height: 100vh;
+        text-rendering: optimizeSpeed;
+        line-height: 1.5
+      }
+
+      a:not([class]) {
+        text-decoration-skip-ink: auto
+      }
+
+      img,
+      picture {
+        max-width: 100%;
+        display: block
+      }
+
+      input,
+      button,
+      textarea,
+      select {
+        font: inherit
+      }
+
+      @media(prefers-reduced-motion:reduce) {
+        html:focus-within {
+          scroll-behavior: auto
+        }
+
+        *,
+        *::before,
+        *::after {
+          animation-duration: .01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: .01ms !important;
+          scroll-behavior: auto !important
+        }
+      }
+
+      html {
+        font-size: 62.5%;
+      }
+
+      body {
+        font-size: 1.4rem;
+      }
+
+      a {
+        color: #4a4a4a;
+        text-decoration: none;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+
+      select {
+        height: 46px;
+        padding: 5px 10px;
+        width: 100%;
+      }
+
+      .wrap {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+      }
+
+      .page01 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #fff;
+        padding: 15px;
+      }
+
+      .page02 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: #fff;
+      }
+
+      .list-header {
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .number {
+        font-size: 1.6rem;
+        color: #217CDF;
+        padding-top: 15px;
+      }
+
+      .number span {
+        font-size: 1.0rem;
+      }
+
+      .list {
+        width: 100%;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+
+      .thumbnail {
+        height: 230px;
+        background-size: cover;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+      }
+
+      .list-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        padding: 10px 15px 10px;
+      }
+
+      .list-comname {
+        font-size: 1.2rem;
+        padding: 0 15px 10px;
+      }
+
+      .table-box {
+        padding: 0 15px 10px;
+      }
+
+      .list-table {
+        font-size: 1.2rem;
+        border-collapse: collapse;
+        width: 100%;
+        border-top: 1px solid #ccc;
+      }
+
+      .list-table td {
+        padding: 5px 0;
+        border-bottom: 1px solid #ccc;
+        width: 50%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      .list-table td span {
+        font-weight: 700;
+      }
+
+      .list-table td:nth-child(odd) {
+        padding-right: 5px;
+      }
+
+      .list-table td:nth-child(even) {
+        padding-left: 5px;
+      }
+
+      .list-button {
+        height: 46px;
+        color: #fff;
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 46px;
+        text-align: center;
+        background-color: #1BA5BC;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+
+      .detail-titile {
+        font-size: 1.6rem;
+        line-height: 1.5;
+        padding: 15px;
+      }
+
+      .detail-thumbnail {
+        height: 230px;
+        margin-bottom: 15px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
+
+      .detail-subtitle {
+        font-weight: 700;
+        padding: 0 15px 15px;
+      }
+
+      .detail-txt {
+        padding: 0 15px 30px;
+      }
+
+      .detail-tablebox {
+        padding: 0 15px 15px;
+      }
+
+      .detail-table {
+        width: 100%;
+        border-top: 1px solid #ccc;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      .detail-table th {
+        background-color: #ccc;
+        color: #4a4a4a;
+        padding: 5px;
+        text-align: left;
+        border-bottom: 1px solid #fff;
+      }
+
+      .detail-table td {
+        color: #4a4a4a;
+        padding: 5px;
+        text-align: left;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .detail-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        padding: 10px;
+        background-color: #fff;
+        border-top: 1px solid #ccc;
+      }
+
+      .detail-footer button {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: #1BA5BC;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.8rem;
+      }
+
+      a.back-link {
+        display: block;
+        position: fixed;
+        bottom: 80px;
+        left: 15px;
+        width: 46px;
+        height: 46px;
+        border-radius: 23px;
+        background-color: #fff;
+        border-top: 1px solid #ccc;
+        box-shadow: 0px 0px 5px 0px #000000;
+        font-size: 3rem;
+        text-align: center;
+        letter-spacing: 5px;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        new Vue({
+          el: "#vue-space",
+          data: () => {
+            return {
+              places: [],
+            }
+          },
+          created: function () {
+            this.fetchPlaces()
+          },
+          methods: {
+            fetchPlaces() {
+              const offset = this.places.length
+              const limit = 100
+              const storeId = 1022
+              const url = `https://rent.nurvecloud.com/internal_api/anywhere_stores/${storeId}/places?limit=${limit}&offset=${offset}`
+
+              $.ajax({
+                method: "GET",
+                dataType: "json",
+                url
+              }).done(result => {
+                this.places = [...this.places, ...result]
+
+                if (result.length >= limit) {
+                  this.fetchPlaces()
+                }
+              }).catch(error => {
+                this.places = []
+              })
+            },
+            onClickPlace(placeId) {
+              console.log(placeId)
+            }
+          }
+        })
+      })
+    </script>
   </head>
   <body>
-    <div class="wrap">
-      Sample
+    <div id="vue-space" class="wrap">
+      <div class="page01" style=" display: block;">
+
+        <div class="list-header">
+          <div class="number">{{ places.length }}<span>件</span></div>
+          <div class="sort-box">
+            <select name="example">
+              <option value="">並び替え</option>
+              <option value="ソート1">ソート1</option>
+              <option value="ソート2">ソート2</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="list" v-for="place in places">
+          <a href="">
+            <div class="thumbnail" :style="`background-image: url(${place.current_stores_entry_point.thumb_image_url});`"></div>
+            <div class="list-title">
+              {{ place.name }}</div>
+            <div class="list-comname">施工会社：{{ place.attributes.attributes["ハウスメーカー"] }}</div>
+            <div class="table-box">
+              <table class="list-table">
+                <tr>
+                  <td><span>居住構成：</span>{{ place.attributes.attributes["居住構成"] }}</td>
+                  <td><span>建物種別：</span>{{ place.attributes.attributes["建物種別"] }}</td>
+                </tr>
+                <tr>
+                  <td><span>間取り：</span>{{ place.attributes.attributes["間取り"] }}</td>
+                  <td><span>面積：</span>{{ place.attributes.attributes["面積"] }}</td>
+                </tr>
+                <tr>
+                  <td><span>予算：</span>{{ place.attributes.attributes["予算"] }}</td>
+                  <td><span>所在地：</span>{{ place.attributes.attributes["所在地"] }}</td>
+                </tr>
+              </table>
+            </div>
+            <div class="list-button" @click="onClickPlace(place.id)">この施工事例をみる</div>
+          </a>
+        </div>
+      </div>
     </div>
   </body>
 </html>
