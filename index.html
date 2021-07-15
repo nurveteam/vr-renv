@@ -95,6 +95,8 @@
         height: 46px;
         padding: 5px 10px;
         width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
       }
 
       .wrap {
@@ -122,6 +124,43 @@
         width: 100%;
         height: 100vh;
         background-color: #fff;
+      }
+
+      .search-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        text-align: center;
+        padding-bottom: 15px;
+      }
+
+      .search-box {
+        background-color: #F1F1F1;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .search-section {
+        padding-bottom: 15px;
+      }
+
+      .search-submit {
+        width: 65%;
+        margin: 10px auto 20px;
+        background-color: #1BA5BC;
+        display: block;
+        padding: 15px;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+      }
+
+      .search-clear {
+        width: 50%;
+        margin: 10px auto 0;
+        display: block;
+        color: #1BA5BC;
+        background-color: transparent;
+        border: none;
       }
 
       .list-header {
@@ -216,12 +255,9 @@
         padding: 15px;
       }
 
-      .detail-thumbnail {
-        height: 230px;
-        margin-bottom: 15px;
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center center;
+      .detail-vr {
+        height: auto;
+        margin-bottom: 20px;
       }
 
       .detail-subtitle {
@@ -296,6 +332,47 @@
         text-align: center;
         letter-spacing: 5px;
       }
+
+      .before_after {
+        background-color: #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+
+      .before-img,
+      .after-img {
+        width: 100%;
+        background-color: #fff;
+        position: relative;
+      }
+
+      .before-img::after {
+        content: "▼";
+        width: 100%;
+        display: block;
+        text-align: center;
+        background-color: #ccc;
+      }
+
+      .before-img::before {
+        position: absolute;
+        top: 0;left: 0;
+        content: "before";
+        display: inline-block;
+        padding: 5px;
+        background-color: #4a4a4a;
+        color: #fff;
+      }
+
+      .after-img::before {
+        position: absolute;
+        top: 0;left: 0;
+        content: "after";
+        display: inline-block;
+        padding: 5px;
+        background-color: #4a4a4a;
+        color: #fff;
+      }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
@@ -323,9 +400,6 @@
             fetchPlaces() {
               const offset = this.places.length
               const limit = 100
-              // const storeId = 150
-              // const url = `http://localhost:3000/internal_api/anywhere_stores/${storeId}/places?limit=${limit}&offset=${offset}`
-              // 本番環境用
               const storeId = 1022
               const url = `https://rent.nurvecloud.com/internal_api/anywhere_stores/${storeId}/places?limit=${limit}&offset=${offset}`
 
@@ -357,6 +431,52 @@
   <body>
     <div id="vue-space" class="wrap">
       <div class="page01" v-if="!viewingPlace">
+        <div class="search-title">条件を指定して絞り込み</div>
+
+        <div class="search-box">
+          <div class="search-section">
+            <label for="search01">居住構成</label>
+            <select name="example" id="search01">
+              <option value="">家族構成・賃貸などを選択</option>
+              <option value="ソート1">ソート1</option>
+              <option value="ソート2">ソート2</option>
+            </select>
+          </div>
+          <div class="search-section">
+            <label for="search02">建物種別</label>
+            <select name="example" id="search02">
+              <option value="">戸建て・マンションなどを選択</option>
+              <option value="ソート1">ソート1</option>
+              <option value="ソート2">ソート2</option>
+            </select>
+          </div>
+          <div class="search-section">
+            <label for="search03">間取り</label>
+            <select name="example" id="search03">
+              <option value="">間取りタイプを選択</option>
+              <option value="ソート1">ソート1</option>
+              <option value="ソート2">ソート2</option>
+            </select>
+          </div>
+          <div class="search-section">
+            <label for="search04">面積</label>
+            <select name="example" id="search04">
+              <option value="">面積を選択</option>
+              <option value="ソート1">ソート1</option>
+              <option value="ソート2">ソート2</option>
+            </select>
+          </div>
+          <div class="search-section">
+            <label for="search05">予算</label>
+            <select name="example" id="search05">
+              <option value="">予算を選択</option>
+              <option value="ソート1">ソート1</option>
+              <option value="ソート2">ソート2</option>
+            </select>
+          </div>
+          <button name="action" value="send" type="submit" class="search-submit">絞り込んで検索</button>
+          <button name="action" value="clear" type="button" class="search-clear">条件をクリア</button>
+        </div>
 
         <div class="list-header">
           <div class="number">{{ places.length }}<span>件</span></div>
@@ -371,9 +491,8 @@
 
         <div class="list" v-for="place in places">
           <div class="thumbnail" :style="`background-image: url(${place.current_stores_entry_point.thumb_image_url});`"></div>
-          <div class="list-title">
-            {{ place.name }}</div>
-          <div class="list-comname">施工会社：{{ place.attributes.attributes["ハウスメーカー"] }}</div>
+          <div class="list-title">{{ place.current_stores_entry_point.name }}</div>
+          <div class="list-comname">施工会社：{{ place.attributes.attributes["施工会社"] }}</div>
           <div class="table-box">
             <table class="list-table">
               <tr>
@@ -390,19 +509,22 @@
               </tr>
             </table>
           </div>
-          <div class="list-button" @click="setViewingPlaceId(place.id)">この施工事例をみる</div>
+          <div class="list-button" @click.prevent="setViewingPlaceId(place.id)">この施工事例をみる</div>
         </div>
       </div>
 
       <div class="page02" v-if="viewingPlace">
-        <div class="detail-titile">{{ viewingPlace.name }}</div>
-        <div class="detail-thumbnail" :style="`background-image: url(${viewingPlace.current_stores_entry_point.thumb_image_url});`"></div>
-        <div class="detail-subtitle">{{ viewingPlace.current_stores_entry_point.name }}</div>
+        <div class="detail-titile">{{ viewingPlace.current_stores_entry_point.name }}</div>
+        <div class="detail-vr"><img src="vr.jpg" alt=""></div>
         <div class="detail-txt">
           {{ viewingPlace.current_stores_entry_point.description }}
         </div>
         <div class="detail-tablebox">
           <table class="detail-table">
+            <tr>
+              <th>施工会社</th>
+              <td>{{ viewingPlace.attributes.attributes["施工会社"] }}</td>
+            </tr>
             <tr>
               <th>面積</th>
               <td>{{ viewingPlace.attributes.attributes["面積"] }}</td>
@@ -420,7 +542,7 @@
               <td>{{ viewingPlace.attributes.attributes["構造"] }}</td>
             </tr>
             <tr>
-              <th>リノベーション<br>施工年月日</th>
+              <th>施工年月</th>
               <td>{{ viewingPlace.attributes.attributes["リノベーション"] }}</td>
             </tr>
             <tr>
@@ -437,11 +559,14 @@
             </tr>
           </table>
         </div>
-        <img src="zumen.png" alt="図面">
+        <div class="before_after">
+          <div class="before-img"><img src="zumen_b.jpg" alt="ビフォー"></div>
+          <div class="after-img"><img src="zumen_a.jpg" alt="アフター"></div>
+        </div>
         <div style="padding-bottom: 60px;"></div>
-        <a class="back-link" href="#" @click="clearViewingPlaceId">&lt;</a>
+        <a class="back-link" href="#" @click.prevent="clearViewingPlaceId">&lt;</a>
         <div class="detail-footer">
-          <button>見積もる</button>
+          <button>施工費用を見積もる</button>
         </div>
       </div>
     </div>
