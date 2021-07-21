@@ -86,6 +86,7 @@
         text-decoration: none;
       }
 
+      iframe,
       img {
         width: 100%;
         height: auto;
@@ -152,6 +153,7 @@
         color: #ffffff;
         border: none;
         border-radius: 5px;
+        cursor: pointer;
       }
 
       .search-clear {
@@ -161,6 +163,7 @@
         color: #1BA5BC;
         background-color: transparent;
         border: none;
+        cursor: pointer;
       }
 
       .list-header {
@@ -380,12 +383,27 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
+        const initialSearchConditions = {
+          // 居住構成
+          residenceComposition: "",
+          // 建物種別
+          buildingType: "",
+          // 間取り
+          floorPlan: "",
+          // 面積
+          area: "",
+          // 予算
+          budget: ""
+        }
+
         new Vue({
           el: "#vue-space",
           data: () => {
             return {
-              places: [],
-              viewingPlaceId: null
+              loadedPlaces: [],
+              searchedPlaces: [],
+              viewingPlaceId: null,
+              searchConditions: { ...initialSearchConditions }
             }
           },
           created: function () {
@@ -393,12 +411,12 @@
           },
           computed: {
             viewingPlace() {
-              return this.places.find(place => place.id === this.viewingPlaceId)
+              return this.loadedPlaces.find(place => place.id === this.viewingPlaceId)
             }
           },
           methods: {
             fetchPlaces() {
-              const offset = this.places.length
+              const offset = this.loadedPlaces.length
               const limit = 100
               const storeId = 1022
               const url = `https://rent.nurvecloud.com/internal_api/anywhere_stores/${storeId}/places?limit=${limit}&offset=${offset}`
@@ -408,13 +426,15 @@
                 dataType: "json",
                 url
               }).done(result => {
-                this.places = [...this.places, ...result]
+                this.loadedPlaces = [...this.loadedPlaces, ...result]
 
                 if (result.length >= limit) {
                   this.fetchPlaces()
+                } else {
+                  this.searchedPlaces = this.loadedPlaces
                 }
               }).catch(error => {
-                this.places = []
+                this.loadedPlaces = []
               })
             },
             setViewingPlaceId(placeId) {
@@ -422,6 +442,44 @@
             },
             clearViewingPlaceId() {
               this.viewingPlaceId = null
+            },
+            search() {
+              this.searchedPlaces = this.loadedPlaces.filter(loadedPlace => {
+                if (this.searchConditions.residenceComposition) {
+                  if (loadedPlace.attributes.attributes["居住構成"] !== this.searchConditions.residenceComposition) {
+                    return false
+                  }
+                }
+
+                if (this.searchConditions.buildingType) {
+                  if (loadedPlace.attributes.attributes["建物種別"] !== this.searchConditions.buildingType) {
+                    return false
+                  }
+                }
+
+                if (this.searchConditions.floorPlan) {
+                  if (loadedPlace.attributes.attributes["間取り"] !== this.searchConditions.floorPlan) {
+                    return false
+                  }
+                }
+
+                if (this.searchConditions.area) {
+                  if (loadedPlace.attributes.attributes["面積"] !== this.searchConditions.area) {
+                    return false
+                  }
+                }
+
+                if (this.searchConditions.budget) {
+                  if (loadedPlace.attributes.attributes["予算"] !== this.searchConditions.budget) {
+                    return false
+                  }
+                }
+
+                return true
+              })
+            },
+            clear() {
+              this.searchConditions = { ...initialSearchConditions }
             }
           }
         })
@@ -436,7 +494,7 @@
         <div class="search-box">
           <div class="search-section">
             <label for="search01">居住構成</label>
-            <select name="example" id="search01">
+            <select name="example" id="search01" v-model="searchConditions.residenceComposition">
               <option value="">家族構成・賃貸などを選択</option>
               <option value="ソート1">ソート1</option>
               <option value="ソート2">ソート2</option>
@@ -444,7 +502,7 @@
           </div>
           <div class="search-section">
             <label for="search02">建物種別</label>
-            <select name="example" id="search02">
+            <select name="example" id="search02" v-model="searchConditions.buildingType">
               <option value="">戸建て・マンションなどを選択</option>
               <option value="ソート1">ソート1</option>
               <option value="ソート2">ソート2</option>
@@ -452,7 +510,7 @@
           </div>
           <div class="search-section">
             <label for="search03">間取り</label>
-            <select name="example" id="search03">
+            <select name="example" id="search03" v-model="searchConditions.floorPlan">
               <option value="">間取りタイプを選択</option>
               <option value="ソート1">ソート1</option>
               <option value="ソート2">ソート2</option>
@@ -460,7 +518,7 @@
           </div>
           <div class="search-section">
             <label for="search04">面積</label>
-            <select name="example" id="search04">
+            <select name="example" id="search04" v-model="searchConditions.area">
               <option value="">面積を選択</option>
               <option value="ソート1">ソート1</option>
               <option value="ソート2">ソート2</option>
@@ -468,18 +526,18 @@
           </div>
           <div class="search-section">
             <label for="search05">予算</label>
-            <select name="example" id="search05">
+            <select name="example" id="search05" v-model="searchConditions.budget">
               <option value="">予算を選択</option>
               <option value="ソート1">ソート1</option>
               <option value="ソート2">ソート2</option>
             </select>
           </div>
-          <button name="action" value="send" type="submit" class="search-submit">絞り込んで検索</button>
-          <button name="action" value="clear" type="button" class="search-clear">条件をクリア</button>
+          <button name="action" value="send" type="submit" class="search-submit" @click="search">絞り込んで検索</button>
+          <button name="action" value="clear" type="button" class="search-clear" @click="clear">条件をクリア</button>
         </div>
 
         <div class="list-header">
-          <div class="number">{{ places.length }}<span>件</span></div>
+          <div class="number">{{ searchedPlaces.length }}<span>件</span></div>
           <div class="sort-box">
             <select name="example">
               <option value="">並び替え</option>
@@ -489,7 +547,7 @@
           </div>
         </div>
 
-        <div class="list" v-for="place in places">
+        <div class="list" v-for="place in searchedPlaces">
           <div class="thumbnail" :style="`background-image: url(${place.current_stores_entry_point.thumb_image_url});`"></div>
           <div class="list-title">{{ place.current_stores_entry_point.name }}</div>
           <div class="list-comname">施工会社：{{ place.attributes.attributes["施工会社"] }}</div>
@@ -515,7 +573,9 @@
 
       <div class="page02" v-if="viewingPlace">
         <div class="detail-titile">{{ viewingPlace.current_stores_entry_point.name }}</div>
-        <div class="detail-vr"><img src="vr.jpg" alt=""></div>
+        <div class="detail-vr">
+          <iframe :src="`https://rent.nurvecloud.com/panoramas/${viewingPlace.id}/embed`"></iframe>
+        </div>
         <div class="detail-txt">
           {{ viewingPlace.current_stores_entry_point.description }}
         </div>
