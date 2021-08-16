@@ -309,7 +309,7 @@
         border-top: 1px solid #ccc;
       }
 
-      .detail-footer button {
+      .detail-footer a {
         width: 100%;
         height: 100%;
         border: none;
@@ -318,6 +318,10 @@
         color: #fff;
         font-weight: 700;
         font-size: 1.8rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       a.back-link {
@@ -412,6 +416,14 @@
           computed: {
             viewingPlace() {
               return this.loadedPlaces.find(place => place.id === this.viewingPlaceId)
+            },
+            estimatePageUrl() {
+              if (!this.viewingPlace) return "#"
+
+              const baseUrl = "https://nurve-line-bot.herokuapp.com/quote/BAh7BjoKdG9rZW5JIgc0NwY6BkVG--96510eb0b567a309c7b053e83d99608251960872"
+              const params = this.estimatePageUrlParams()
+
+              return baseUrl + params
             }
           },
           methods: {
@@ -480,6 +492,26 @@
             },
             clear() {
               this.searchConditions = { ...initialSearchConditions }
+            },
+            estimatePageUrlParams() {
+              let paramItems = {
+                original_calculation_method: "見積り計算式",
+                methods_labels: "見積り計算式に使用する変数のラベル",
+                provider_name: "見積り発行者",
+                details: "施工内容"
+              }
+
+              let params = `?place_id=${this.viewingPlace.id}`
+
+              for (let key of Object.keys(paramItems)) {
+                const item = this.viewingPlace.show_items.find(({ name }) => name === paramItems[key])
+
+                if (item) {
+                  params += `&${key}=${encodeURIComponent(item.value || "")}`
+                }
+              }
+
+              return params
             }
           }
         })
@@ -626,7 +658,7 @@
         <div style="padding-bottom: 60px;"></div>
         <a class="back-link" href="#" @click.prevent="clearViewingPlaceId">&lt;</a>
         <div class="detail-footer">
-          <button>施工費用を見積もる</button>
+          <a :href="estimatePageUrl">施工費用を見積もる</a>
         </div>
       </div>
     </div>
