@@ -404,6 +404,9 @@
           el: "#vue-space",
           data: () => {
             return {
+              apiHost: "https://rent.nurvecloud.com",
+              storeId: 1022,
+              anywhereStore: {},
               loadedPlaces: [],
               searchedPlaces: [],
               viewingPlaceId: null,
@@ -411,7 +414,7 @@
             }
           },
           created: function () {
-            this.fetchPlaces()
+            this.fetchInitial()
           },
           computed: {
             viewingPlace() {
@@ -420,18 +423,36 @@
             estimatePageUrl() {
               if (!this.viewingPlace) return "#"
 
-              const baseUrl = "https://nurve-line-bot.herokuapp.com/quote/BAh7BjoKdG9rZW5JIgc0NwY6BkVG--96510eb0b567a309c7b053e83d99608251960872"
-              const params = this.estimatePageUrlParams()
+              const placeSiteUrls = this.anywhereStore.preferences.place_site_urls
+              const categoryId = this.viewingPlace.attribute_template.category_id
+              const anywhereStoreUrlItem = this.viewingPlace.show_items.find(({ name }) => name === "どこでもストア内物件サイト表示用URL")
+              let baseUrl = anywhereStoreUrlItem && anywhereStoreUrlItem.show
+              baseUrl ||= placeSiteUrls && placeSiteUrls[categoryId]
 
-              return baseUrl + params
+              if (!baseUrl) return "#"
+
+              return this.replacePlaceAttributes(baseUrl)
             }
           },
           methods: {
+            fetchInitial() {
+              this.fetchAnywhereStore()
+            },
+            fetchAnywhereStore() {
+              const url = `${this.apiHost}/internal_api/anywhere_stores/${this.storeId}`
+              $.ajax({
+                method: "GET",
+                dataType: "json",
+                url
+              }).done(result => {
+                this.anywhereStore = result
+                this.fetchPlaces()
+              })
+            },
             fetchPlaces() {
               const offset = this.loadedPlaces.length
               const limit = 100
-              const storeId = 1022
-              const url = `https://rent.nurvecloud.com/internal_api/anywhere_stores/${storeId}/places?limit=${limit}&offset=${offset}`
+              const url = `${this.apiHost}/internal_api/anywhere_stores/${this.storeId}/places?limit=${limit}&offset=${offset}`
 
               $.ajax({
                 method: "GET",
@@ -493,25 +514,18 @@
             clear() {
               this.searchConditions = { ...initialSearchConditions }
             },
-            estimatePageUrlParams() {
-              let paramItems = {
-                original_calculation_method: "見積り計算式",
-                methods_labels: "見積り計算式に使用する変数のラベル",
-                provider_name: "見積り発行者",
-                details: "施工内容"
+            replacePlaceAttributes(baseUrl) {
+              let str = baseUrl
+
+              for (let key of Object.keys(this.viewingPlace.attributes)) {
+                str = str.replace(`{${key}}`, encodeURIComponent(this.viewingPlace.attributes[key] || ""))
               }
 
-              let params = `?place_id=${this.viewingPlace.id}`
-
-              for (let key of Object.keys(paramItems)) {
-                const item = this.viewingPlace.show_items.find(({ name }) => name === paramItems[key])
-
-                if (item) {
-                  params += `&${key}=${encodeURIComponent(item.value || "")}`
-                }
+              for (let item of this.viewingPlace.show_items) {
+                str = str.replace(`{${item.name}}`, encodeURIComponent(item.value || ""))
               }
 
-              return params
+              return str
             }
           }
         })
