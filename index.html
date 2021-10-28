@@ -535,9 +535,9 @@
   <body>
     <div id="vue-space" class="wrap">
       <div class="page01" v-if="!viewingPlace">
-        <div class="search-title">条件を指定して絞り込み</div>
+        <div class="search-title" v-if="false">条件を指定して絞り込み</div>
 
-        <div class="search-box">
+        <div class="search-box" v-if="false">
           <div class="search-section">
             <label for="search01">居住構成</label>
             <select name="example" id="search01" v-model="searchConditions.residenceComposition">
@@ -584,7 +584,7 @@
 
         <div class="list-header">
           <div class="number">{{ searchedPlaces.length }}<span>件</span></div>
-          <div class="sort-box">
+          <div class="sort-box" v-if="false">
             <select name="example">
               <option value="">並び替え</option>
               <option value="ソート1">ソート1</option>
@@ -665,7 +665,7 @@
             </tr>
           </table>
         </div>
-        <div class="before_after">
+        <div class="before_after" v-if="false">
           <div class="before-img"><img src="zumen_b.jpg" alt="ビフォー"></div>
           <div class="after-img"><img src="zumen_a.jpg" alt="アフター"></div>
         </div>
