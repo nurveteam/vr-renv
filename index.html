@@ -380,6 +380,11 @@
         background-color: #4a4a4a;
         color: #fff;
       }
+
+      .nc-panorama-iframe {
+        border: none;
+        min-height: 300px;
+      }
     </style>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
@@ -620,7 +625,13 @@
       <div class="page02" v-if="viewingPlace">
         <div class="detail-titile">{{ viewingPlace.current_stores_entry_point.name }}</div>
         <div class="detail-vr">
-          <iframe :src="`https://rent.nurvecloud.com/panoramas/${viewingPlace.id}/embed`"></iframe>
+          <iframe
+            class="nc-panorama-iframe"
+            :src="`https://rent.nurvecloud.com/panoramas/${viewingPlace.id}/embed`"
+            frameborder="0"
+            allowfullscreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          />
         </div>
         <div class="detail-txt">
           {{ viewingPlace.current_stores_entry_point.description }}
