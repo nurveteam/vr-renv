@@ -383,7 +383,8 @@
 
       .nc-panorama-iframe {
         border: none;
-        min-height: 300px;
+        /*min-height: 300px;*/
+        height: calc(100vh - 170px)
       }
     </style>
 
@@ -410,7 +411,7 @@
           data: () => {
             return {
               apiHost: "https://rent.nurvecloud.com",
-              storeId: 1022,
+              storeId: 1333,
               anywhereStore: {},
               loadedPlaces: [],
               searchedPlaces: [],
@@ -601,9 +602,9 @@
         <div class="list" v-for="place in searchedPlaces">
           <div class="thumbnail" :style="`background-image: url(${place.current_stores_entry_point.thumb_image_url});`"></div>
           <div class="list-title">{{ place.current_stores_entry_point.name }}</div>
-          <div class="list-comname">施工会社：{{ place.attributes.attributes["施工会社"] }}</div>
+          <div class="list-comname">撮影日：{{ place.parent.name }}</div>
           <div class="table-box">
-            <table class="list-table">
+<!--             <table class="list-table">
               <tr>
                 <td><span>居住構成：</span>{{ place.attributes.attributes["居住構成"] }}</td>
                 <td><span>建物種別：</span>{{ place.attributes.attributes["建物種別"] }}</td>
@@ -616,9 +617,9 @@
                 <td><span>予算：</span>{{ place.attributes.attributes["予算"] }}</td>
                 <td><span>所在地：</span>{{ place.attributes.attributes["所在地"] }}</td>
               </tr>
-            </table>
+            </table> -->
           </div>
-          <div class="list-button" @click.prevent="setViewingPlaceId(place.id)">この施工事例をみる</div>
+          <div class="list-button" @click.prevent="setViewingPlaceId(place.id)">この動画を見る</div>
         </div>
       </div>
 
@@ -636,7 +637,7 @@
         <div class="detail-txt">
           {{ viewingPlace.current_stores_entry_point.description }}
         </div>
-        <div class="detail-tablebox">
+        <!-- <div class="detail-tablebox">
           <table class="detail-table">
             <tr>
               <th>施工会社</th>
@@ -675,7 +676,7 @@
               <td>{{ viewingPlace.attributes.attributes["居住構成"] }}</td>
             </tr>
           </table>
-        </div>
+        </div> -->
         <div class="before_after" v-if="false">
           <div class="before-img"><img src="zumen_b.jpg" alt="ビフォー"></div>
           <div class="after-img"><img src="zumen_a.jpg" alt="アフター"></div>
@@ -683,7 +684,7 @@
         <div style="padding-bottom: 60px;"></div>
         <a class="back-link" href="#" @click.prevent="clearViewingPlaceId">&lt;</a>
         <div class="detail-footer">
-          <a :href="estimatePageUrl">施工費用を見積もる</a>
+          <a :href="estimatePageUrl">来店予約</a>
         </div>
       </div>
     </div>
