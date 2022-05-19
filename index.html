@@ -427,17 +427,19 @@
               return this.loadedPlaces.find(place => place.id === this.viewingPlaceId)
             },
             estimatePageUrl() {
-              if (!this.viewingPlace) return "#"
+              return "https://line.me/R/ti/p/%40240qvrrg"
 
-              const placeSiteUrls = this.anywhereStore.preferences.place_site_urls
-              const categoryId = this.viewingPlace.attribute_template.category_id
-              const anywhereStoreUrlItem = this.viewingPlace.show_items.find(({ name }) => name === "どこでもストア内物件サイト表示用URL")
-              let baseUrl = anywhereStoreUrlItem && anywhereStoreUrlItem.show
-              baseUrl ||= placeSiteUrls && placeSiteUrls[categoryId]
+              // if (!this.viewingPlace) return "#"
 
-              if (!baseUrl) return "#"
+              // const placeSiteUrls = this.anywhereStore.preferences.place_site_urls
+              // const categoryId = this.viewingPlace.attribute_template.category_id
+              // const anywhereStoreUrlItem = this.viewingPlace.show_items.find(({ name }) => name === "どこでもストア内物件サイト表示用URL")
+              // let baseUrl = anywhereStoreUrlItem && anywhereStoreUrlItem.show
+              // baseUrl ||= placeSiteUrls && placeSiteUrls[categoryId]
 
-              return this.replacePlaceAttributes(baseUrl)
+              // if (!baseUrl) return "#"
+
+              // return this.replacePlaceAttributes(baseUrl)
             }
           },
           methods: {
